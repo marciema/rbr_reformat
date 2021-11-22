@@ -114,9 +114,9 @@ distinct dps1.unit_token
      else 0 end) *4 as annualized_qtly_gpv
 ,case when annual_gpv> annualized_qtly_gpv then annual_gpv
 else annualized_qtly_gpv end as gpv_vf
-,case when gpv_vf > 500000 then '>500k'
-when gpv_vf >125000 then '125-500k'
-else '<125k' end as gpv_band_m
+,case when gpv_vf > 500000 then '3.>500k'
+when gpv_vf >125000 then '2.125-500k'
+else '1.<125k' end as gpv_band_m
 from (select 
       unit_token
       ,date_trunc(month, payment_trx_recognized_date) as month
@@ -143,15 +143,14 @@ select distinct unit_token
       ,date_trunc(quarter, payment_trx_recognized_date) as quarter
       ,currency_code
       ,sum(gpv_payment_amount_base_unit/100)*4 as annulized_quarterly_gpv_dllr
-      ,case when annulized_quarterly_gpv_dllr > 500000 then '>500k'
-        when annulized_quarterly_gpv_dllr >125000 then '125-500k'
-        else '<125k' end as gpv_band_q
+      ,case when annulized_quarterly_gpv_dllr > 500000 then '3.>500k'
+        when annulized_quarterly_gpv_dllr >125000 then '2.125-500k'
+        else '1.<125k' end as gpv_band_q
       from app_bi.pentagon.aggregate_seller_daily_payment_summary
       WHERE payment_trx_recognized_date >= '2019-01-01'
       and payment_trx_recognized_date <= current_date()
       group by 1,2,3
 ;
-
 
 create or replace table app_risk.app_risk.gpv_m_gpvband as 
 SELECT 
@@ -186,12 +185,12 @@ and vf.currency_code = gpvband.currency_code
 ;
 
  CREATE OR REPLACE TABLE app_risk.app_risk.chargeback_arrival_quarterly_loading_gpvband AS   
- select 
+ select
     drv.month
   , drv.quarter
   , drv.currency_Code
-  , nvl(gpv_m.gpv_band_m,'<125k') as gpv_band_m
-  , nvl(gpv_q.gpv_band_q,'<125k') as gpv_band_q
+  , nvl(gpv_m.gpv_band_m,'1.<125k') as gpv_band_m
+  , nvl(gpv_q.gpv_band_q,'2.<125k') as gpv_band_q
   , days_since_month_end
   , days_group_since_month_end
   , days_group_cd_since_month_end
