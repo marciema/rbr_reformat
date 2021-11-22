@@ -190,8 +190,8 @@ and vf.currency_code = gpvband.currency_code
     drv.month
   , drv.quarter
   , drv.currency_Code
-  , gpv_m.gpv_band_m
-  , gpv_q.gpv_band_q
+  , nvl(gpv_m.gpv_band_m,'<125k') as gpv_band_m
+  , nvl(gpv_q.gpv_band_q,'<125k') as gpv_band_q
   , days_since_month_end
   , days_group_since_month_end
   , days_group_cd_since_month_end
