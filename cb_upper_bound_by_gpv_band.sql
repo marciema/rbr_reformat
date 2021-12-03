@@ -108,9 +108,9 @@ select
 distinct dps1.unit_token
 ,dps1.month
 ,dps1.currency_code
-,sum(CASE WHEN DATEDIFF(month, dps2.month, dps1.month) between 0 and 11 then dps2.monthly_gpv_dllr/100
+,sum(CASE WHEN DATEDIFF(month, dps2.month, dps1.month) between 0 and 11 then dps2.monthly_gpv_dllr
      else 0 end) as annual_gpv
-,sum(CASE WHEN DATEDIFF(month, dps2.month, dps1.month) between 0 and 2 then dps2.monthly_gpv_dllr/100
+,sum(CASE WHEN DATEDIFF(month, dps2.month, dps1.month) between 0 and 2 then dps2.monthly_gpv_dllr
      else 0 end) *4 as annualized_qtly_gpv
 ,case when annual_gpv> annualized_qtly_gpv then annual_gpv
 else annualized_qtly_gpv end as gpv_vf
